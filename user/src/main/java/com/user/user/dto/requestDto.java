@@ -12,6 +12,7 @@ import java.util.UUID;
 public class requestDto {
     private UUID id;
     private String fullName;
+    private String role;
     private String email;
     private String district;
     private String phoneNumber;

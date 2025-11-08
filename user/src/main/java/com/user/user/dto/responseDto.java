@@ -17,6 +17,6 @@ public class responseDto {
     private String role;
     private String district;
     private String phoneNumber;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createAT;
+    private LocalDateTime updateAT;
 }
