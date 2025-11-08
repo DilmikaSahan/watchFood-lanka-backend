@@ -2,6 +2,7 @@ package com.user.user.service;
 
 import com.user.user.dto.requestDto;
 import com.user.user.dto.responseDto;
+import com.user.user.exception.UserNotFoundException;
 import com.user.user.model.userModel;
 import com.user.user.repository.userRepository;
 import org.modelmapper.ModelMapper;
@@ -31,7 +32,12 @@ public class userService {
     }
     public List<responseDto> getUserByName(String name){
         List<userModel> users = userRepository.getByName(name);
-        return modelMapper.map(users,new TypeToken<List<responseDto>>(){}.getType());
+        if(users.isEmpty()){
+            throw new UserNotFoundException("User not found");
+        }
+        else {
+            return modelMapper.map(users,new TypeToken<List<responseDto>>(){}.getType());
+        }
     }
     public responseDto getUserByPhone(String phoneNumber){
         userModel user = userRepository.getByPhone(phoneNumber);

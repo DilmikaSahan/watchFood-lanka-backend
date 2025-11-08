@@ -24,7 +24,7 @@ public class userController {
     public List<responseDto> getAllUsers() {
         return userService.getAllUsers();
     }
-    @GetMapping("/getUserById")
+    @GetMapping("/findUserById")
     public responseDto getUserById(@RequestParam("id") UUID id) {
         return userService.getUserById(id);
     }
