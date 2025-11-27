@@ -55,7 +55,6 @@ public class userService {
             userModel user = userRepository.getById(id);
             user.setFullName(requestDto.getFullName());
             user.setEmail(requestDto.getEmail());
-            user.setDistrict(requestDto.getDistrict());
             user.setPhoneNumber(requestDto.getPhoneNumber());
             user.setUpdateAT(LocalDateTime.now());
             userRepository.save(user);

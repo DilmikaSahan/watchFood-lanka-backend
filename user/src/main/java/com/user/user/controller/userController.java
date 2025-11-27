@@ -6,11 +6,15 @@ import com.user.user.model.userModel;
 import com.user.user.service.userService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -38,15 +42,31 @@ public class userController {
         return userService.getUserByPhone(phonenumber);
     }
 
-    @PostMapping("/saveRegularUser")
-    public responseDto saveRegularUser(@RequestBody requestDto requestDto){
+    @PreAuthorize("hasRole('client_user')")
+    @PostMapping("/syncUser")
+    public responseDto saveRegularUser(@AuthenticationPrincipal Jwt jwt){
         responseDto user = new responseDto();
-        user.setId(requestDto.getId());
-        user.setFullName(requestDto.getFullName());
-        user.setRole("user");
-        user.setEmail(requestDto.getEmail());
-        user.setDistrict(requestDto.getDistrict());
-        user.setPhoneNumber(requestDto.getPhoneNumber());
+        user.setId(UUID.fromString(jwt.getSubject()));
+        user.setEmail(jwt.getClaims().get("email").toString());
+        user.setFullName(jwt.getClaims().get("name").toString());
+        Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+        if (realmAccess != null && realmAccess.get("roles") != null) {
+            @SuppressWarnings("unchecked")
+            List<String> roles = (List<String>) realmAccess.get("roles");
+
+            String userRole = "user";
+            if(roles.contains("admin")) {
+                userRole = "admin";
+            }else if(roles.contains("officer")) {
+                userRole = "officer";
+            }else if(roles.contains("user")) {
+                userRole = "user";
+            }
+            user.setRole(userRole);
+        }else {
+            user.setRole("user");
+        }
+        user.setPhoneNumber(jwt.getClaims().get("phone_number").toString());
         user.setCreateAT(LocalDateTime.now());
         user.setUpdateAT(LocalDateTime.now());
         return userService.saveUser(user);
@@ -58,10 +78,10 @@ public class userController {
         user.setFullName(requestDto.getFullName());
         user.setRole(requestDto.getRole());
         user.setEmail(requestDto.getEmail());
-        user.setDistrict(requestDto.getDistrict());
         user.setPhoneNumber(requestDto.getPhoneNumber());
         user.setCreateAT(LocalDateTime.now());
         user.setUpdateAT(LocalDateTime.now());
+        System.out.println(user);
         return userService.saveUser(user);
     }
 

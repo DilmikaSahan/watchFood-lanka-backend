@@ -1,9 +1,6 @@
 package com.user.user.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,6 @@ public class userModel {
     private String fullName;
     private String role;
     private String email;
-    private String district;
     private String phoneNumber;
 
     private LocalDateTime createAT = LocalDateTime.now();
