@@ -15,7 +15,6 @@ public class responseDto {
     private String fullName;
     private String email;
     private String role;
-    private String district;
     private String phoneNumber;
     private LocalDateTime createAT;
     private LocalDateTime updateAT;

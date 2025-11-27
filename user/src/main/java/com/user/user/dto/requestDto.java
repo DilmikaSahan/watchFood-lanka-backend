@@ -14,7 +14,6 @@ public class requestDto {
     private String fullName;
     private String role;
     private String email;
-    private String district;
     private String phoneNumber;
 }
 
