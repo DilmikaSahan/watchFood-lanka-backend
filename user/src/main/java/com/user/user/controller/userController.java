@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin
 @RequestMapping(value = "api/v1/user")
 public class userController {
     @Autowired
@@ -46,14 +45,16 @@ public class userController {
     @PostMapping("/syncUser")
     public responseDto saveRegularUser(@AuthenticationPrincipal Jwt jwt){
         responseDto user = new responseDto();
+        //extract user info from the token
         user.setId(UUID.fromString(jwt.getSubject()));
         user.setEmail(jwt.getClaims().get("email").toString());
         user.setFullName(jwt.getClaims().get("name").toString());
         Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+
+        // extract role from the token
         if (realmAccess != null && realmAccess.get("roles") != null) {
             @SuppressWarnings("unchecked")
             List<String> roles = (List<String>) realmAccess.get("roles");
-
             String userRole = "user";
             if(roles.contains("admin")) {
                 userRole = "admin";
@@ -66,6 +67,7 @@ public class userController {
         }else {
             user.setRole("user");
         }
+
         user.setPhoneNumber(jwt.getClaims().get("phone_number").toString());
         user.setCreateAT(LocalDateTime.now());
         user.setUpdateAT(LocalDateTime.now());

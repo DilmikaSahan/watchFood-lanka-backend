@@ -45,9 +45,22 @@ public class userService {
         System.out.println(user.getUpdateAT());
         return modelMapper.map(user,responseDto.class);
     }
-    public responseDto saveUser(responseDto user){
-        userRepository.save(modelMapper.map(user, userModel.class));
-        return user;
+    public responseDto saveUser(responseDto dto){
+        UUID userId = dto.getId();
+        userModel user = userRepository.findById(userId).orElse(null);
+        if (user == null){
+            userRepository.save(modelMapper.map(dto, userModel.class));
+            System.out.println("user added");
+            return dto;
+        }else {
+            user.setFullName(dto.getFullName());
+            user.setEmail(dto.getEmail());
+            user.setPhoneNumber( dto.getPhoneNumber());
+        }
+        user.setUpdateAT(LocalDateTime.now());
+        userModel savedUser = userRepository.save(user);
+        System.out.println("user exist");
+        return modelMapper.map(savedUser,responseDto.class);
     }
     public String updateUser(requestDto requestDto){
         try {
