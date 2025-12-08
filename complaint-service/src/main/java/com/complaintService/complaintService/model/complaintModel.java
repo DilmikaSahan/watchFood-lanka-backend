@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +18,7 @@ import java.util.UUID;
 public class complaintModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long compliantId;
+    private Long complaintId;
 
     @Column(nullable = false)
     private UUID complainerId;
@@ -27,7 +30,14 @@ public class complaintModel {
     @Column(length = 2000, nullable = false)
     private String description;
 
-    private String imageUrl;
+    private String province;
+    private String district;
+    private String city;
+    private String location;
+
+    @Column(name = "image_url")
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private List<String> imageUrl;
 
     private LocalDateTime complaintAt;
 
