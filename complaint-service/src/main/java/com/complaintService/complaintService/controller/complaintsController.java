@@ -5,6 +5,7 @@ import com.complaintService.complaintService.dto.userComplaintupdateDto;
 import com.complaintService.complaintService.dto.userCompliantResponseDto;
 import com.complaintService.complaintService.service.complaintService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -45,9 +46,19 @@ public class complaintsController {
     public userCompliantResponseDto updateComplaint(@RequestBody userComplaintupdateDto complaint){
         return ComplaintService.updateComplaintUser(complaint);
     }
-    @DeleteMapping("/deleteComplain ")
-    public String deleteComplaint(@RequestBody Long complaintId){
-        return ComplaintService.deleteComplaintUserById(complaintId);
+    @DeleteMapping("/deleteComplaint/{complaintId}")
+    public ResponseEntity<?> deleteComplaint(@PathVariable Long complaintId){
+        return ComplaintService.deleteComplaintByComplaintId(complaintId);
+    }
+
+    @PutMapping("/addImages/{complaintId}")
+    public List<String> addImages(@PathVariable Long complaintId,@RequestBody List<String> images){
+        return ComplaintService.addImages(complaintId,images);
+    }
+
+    @PutMapping("/deleteImages/{complaintId}")
+    public List<String> deleteImages(@PathVariable Long complaintId,@RequestBody List<String> images){
+        return ComplaintService.deleteImages(complaintId,images);
     }
 
 }
