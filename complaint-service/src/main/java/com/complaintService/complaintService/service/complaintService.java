@@ -1,8 +1,6 @@
 package com.complaintService.complaintService.service;
 
-import com.complaintService.complaintService.dto.userCompliantResponseDto;
-import com.complaintService.complaintService.dto.userCompliantCreateDto;
-import com.complaintService.complaintService.dto.userComplaintupdateDto;
+import com.complaintService.complaintService.dto.*;
 import com.complaintService.complaintService.model.CompliantStatus;
 import com.complaintService.complaintService.model.complaintModel;
 import com.complaintService.complaintService.repository.complaintRepo;
@@ -89,7 +87,59 @@ public class complaintService {
         complaintrepo.save(complaint);
         return imagesList;
     }
+    //assigned officer to complaint
+    public ResponseEntity<Map<String,String>> assignedOfficerToCompliant(Long complaintId,UUID officerId){
+        complaintModel complaint = complaintrepo.getCompliantById(complaintId);
+        complaint.setOfficer(officerId);
+        complaintrepo.save(complaint);
+        return ResponseEntity.ok(Map.of("message","success"));
+    }
+    //get all complaint by assigned officer ID
+    public List<userCompliantResponseDto> getCompliantOfficerId(UUID officerId) {
+        List<complaintModel> complaints = complaintrepo.getCompliantByOfficer(officerId);
+        if (complaints.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return modelMapper.map(complaints,new TypeToken<List<userCompliantResponseDto>>(){}.getType());
+    }
+    //update officer section
+    public ResponseEntity<Map<String,String>> updateOfficerSection(UUID officerId,Long complaintID,OfficerComplaintRequestDto dto){
+        UUID officer = dto.getOfficer();
+        if (!officer.equals(officerId)) {
+            return ResponseEntity.status(403).body(Map.of("message","unauthorized"));
+        }
+        complaintModel complaint = complaintrepo.getCompliantById(complaintID);
+        if (complaint == null) {
+            return ResponseEntity.status(404).body(Map.of("message","not found"));
+        }
+        complaint.setStatus(dto.getStatus());
+        complaint.setOfficerNote(dto.getOfficerNote());
+        complaintrepo.save(complaint);
+        return ResponseEntity.ok(Map.of("message","success"));
+
+        }
+    //return all complaints stats
+    public complaintStatsDto getAllComplaintStats(){
+        complaintStatsDto complaintStats = new complaintStatsDto();
+        complaintStats.setTotalComplaints(complaintrepo.findAll().size());
+        complaintStats.setPendingComplaints(complaintrepo.getPendingCompliantCount());
+        complaintStats.setResolvedComplaints(complaintrepo.getResolvedCompliantCount());
+        complaintStats.setRejectedComplaints(complaintrepo.getRejectedCompliantCount());
+        complaintStats.setInProgressComplaints(complaintrepo.getInProgressCompliantCount());
+        return complaintStats;
+    }
+    // remove (unassign) officer from complain: permission  admin
+    public ResponseEntity<?> updateOfficerAssignment(Long complaintID){
+        complaintModel complaint = complaintrepo.getCompliantById(complaintID);
+        if (complaint == null) {
+            return ResponseEntity.status(404).body(Map.of("message","not found"));
+        }
+        complaint.setOfficer(null);
+        complaintrepo.save(complaint);
+        return ResponseEntity.ok(Map.of("message","success"));
+    }
+    }
 
 
 
-}
+

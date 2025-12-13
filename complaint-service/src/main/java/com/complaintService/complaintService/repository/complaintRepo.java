@@ -19,4 +19,20 @@ public interface complaintRepo extends JpaRepository<complaintModel,Long> {
     @Query(value = "SELECT unnest(string_to_array(image_url, ',')) AS url FROM complaint_model WHERE compliant_id = ?1",nativeQuery = true)
     List<String> getImageUrls(Long complaintId);
 
+    @Query(value = "SELECT * FROM complaint_model WHERE officer = ?1",nativeQuery = true)
+    List<complaintModel> getCompliantByOfficer(UUID officer);
+
+    @Query(value = "SELECT COUNT(status) FROM complaint_model WHERE status = 'PENDING'",nativeQuery = true)
+    Integer getPendingCompliantCount();
+
+    @Query(value = "SELECT COUNT(status) FROM complaint_model WHERE status = 'UNDER_INVESTIGATION'",nativeQuery = true)
+    Integer getInProgressCompliantCount();
+
+    @Query(value = "SELECT COUNT(status) FROM complaint_model WHERE status = 'RESOLVED'",nativeQuery = true)
+    Integer getResolvedCompliantCount();
+
+    @Query(value = "SELECT COUNT(status) FROM complaint_model WHERE status = 'REJECTED'",nativeQuery = true)
+    Integer getRejectedCompliantCount();
+
+
 }
