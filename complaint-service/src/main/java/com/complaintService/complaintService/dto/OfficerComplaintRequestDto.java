@@ -10,6 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfficerComplaintRequestDto {
+    private Long complaintID;
     private UUID officer;
     private String officerNote;
     private CompliantStatus status;
