@@ -1,11 +1,11 @@
 package com.user.user.controller;
 
-import com.user.user.dto.requestDto;
-import com.user.user.dto.responseDto;
+import com.user.user.dto.*;
 import com.user.user.model.userModel;
 import com.user.user.service.userService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -41,7 +41,7 @@ public class userController {
         return userService.getUserByPhone(phonenumber);
     }
 
-    @PreAuthorize("hasRole('client_user')")
+
     @PostMapping("/syncUser")
     public responseDto saveRegularUser(@AuthenticationPrincipal Jwt jwt){
         responseDto user = new responseDto();
@@ -91,5 +91,27 @@ public class userController {
     public String updateUser(@RequestBody requestDto requestDto){
         return userService.updateUser(requestDto);
     }
+    //get user stats
+    @GetMapping("/getUserStats")
+    public userStatsDto getUserStats(){
+        return userService.getUserStats();
+    }
+    //get all officer details
+    @GetMapping("/getOfficerDetails")
+    public List<officerDetailsDto> getOfficerDetails(){
+        return userService.getOfficersDetails();
+    }
+    //update officer details status and accountableDistrict
+    @PutMapping("/updateOfficerDetails/{Id}")
+    public ResponseEntity<?> updateOfficer(@PathVariable Long Id, @RequestBody officerUpdateDto dto){
+        return userService.updateOfficerDetails(Id,dto);
+
+    }
+    //update officer AssignedCasesCount
+    @PutMapping("/UpdateAssignedCasesCount/{officerId}")
+    public ResponseEntity<?> UpdateAssignedCasesCount(@PathVariable UUID officerId,@RequestBody String option){
+        return userService.UpdateAssignedCasesCount(officerId,option);
+    }
+
 
 }
