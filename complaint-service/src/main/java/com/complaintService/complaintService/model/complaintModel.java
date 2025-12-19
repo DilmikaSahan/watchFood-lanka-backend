@@ -48,6 +48,6 @@ public class complaintModel {
     @Enumerated(EnumType.STRING)
     private CompliantStatus status;
 
-    private Integer priorityLevel;
+    private String priorityLevel;
 
 }

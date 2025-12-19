@@ -26,4 +26,6 @@ public class userCompliantResponseDto {
     private UUID officer;
     private String officerNote;
     private LocalDateTime complaintAt;
+    private String priorityLevel;
+
 }

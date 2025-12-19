@@ -1,8 +1,8 @@
 package com.aiService.aiService.service;
 
 import com.aiService.aiService.client.MlModelClient;
-import com.aiService.aiService.dto.PriorityRequest;
-import com.aiService.aiService.dto.PriorityResponse;
+import com.aiService.aiService.dto.priorityRequestDto;
+import com.aiService.aiService.dto.priorityResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 public class priorityService {
     private final MlModelClient mlModelClient;
 
-    public PriorityResponse predictPriority(PriorityRequest dto){
-        PriorityResponse response =  mlModelClient.callModel(dto.getComplaintText());
+    public priorityResponseDto predictPriority(priorityRequestDto dto){
+        priorityResponseDto response =  mlModelClient.callModel(dto.getComplaintText());
         response.setId(dto.getId());
         return response;
     }

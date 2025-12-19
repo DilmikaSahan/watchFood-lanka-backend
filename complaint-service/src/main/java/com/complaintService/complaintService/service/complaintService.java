@@ -1,6 +1,7 @@
 package com.complaintService.complaintService.service;
 
 import com.complaintService.complaintService.dto.*;
+import com.complaintService.complaintService.kafka.kafkaProducer;
 import com.complaintService.complaintService.model.CompliantStatus;
 import com.complaintService.complaintService.model.complaintModel;
 import com.complaintService.complaintService.repository.complaintRepo;
@@ -24,6 +25,10 @@ public class complaintService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private kafkaProducer KafkaProducer;
+
     // get all complaints, access permission : officer, admin
     public List<userCompliantResponseDto> getAllCompliants() {
         List<complaintModel> complaintList = complaintrepo.findAll();
@@ -53,6 +58,9 @@ public class complaintService {
         complaintmodel.setStatus(CompliantStatus.PENDING);
         modelMapper.map(complaint,complaintmodel);
         complaintrepo.save(complaintmodel);
+        KafkaProducer.sendForPrioritization(new priorityRequestDto(
+                complaintmodel.getComplaintId(),complaintmodel.getDescription()
+        ));
         return modelMapper.map(complaintmodel,userCompliantResponseDto.class);
     }
 
@@ -137,6 +145,16 @@ public class complaintService {
         complaint.setOfficer(null);
         complaintrepo.save(complaint);
         return ResponseEntity.ok(Map.of("message","success"));
+    }
+    //update priority of complaint
+    public ResponseEntity<?> updateComplaintPriority(priorityResponseDto  responseDto){
+        complaintModel complaint =  complaintrepo.getCompliantById(responseDto.getId());
+        if (complaint == null) {
+            return ResponseEntity.status(404).body(Map.of("message","not found"));
+        }
+        complaint.setPriorityLevel(responseDto.getPriorityLevel());
+        complaintrepo.save(complaint);
+        return  ResponseEntity.ok(Map.of("message","success"));
     }
     }
 

@@ -1,6 +1,6 @@
 package com.aiService.aiService.client;
 
-import com.aiService.aiService.dto.PriorityResponse;
+import com.aiService.aiService.dto.priorityResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,10 +16,10 @@ public class MlModelClient {
     @Value("${ml.service.url}")
     private String mlServiceUrl;
 
-    public PriorityResponse callModel(String text){
+    public priorityResponseDto callModel(String text){
         Map<String,String> request = Map.of("text",text);
 
-        return restTemplate.postForObject(mlServiceUrl,request,PriorityResponse.class);
+        return restTemplate.postForObject(mlServiceUrl,request, priorityResponseDto.class);
     }
 
 }
