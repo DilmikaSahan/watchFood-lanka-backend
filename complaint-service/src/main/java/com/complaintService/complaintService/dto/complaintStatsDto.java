@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class complaintStatsDto {
-    private Integer totalComplaints;
+    private Long totalComplaints;
     private Integer resolvedComplaints;
     private Integer pendingComplaints;
     private Integer inProgressComplaints;

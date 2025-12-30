@@ -129,7 +129,7 @@ public class complaintService {
     //return all complaints stats
     public complaintStatsDto getAllComplaintStats(){
         complaintStatsDto complaintStats = new complaintStatsDto();
-        complaintStats.setTotalComplaints(complaintrepo.findAll().size());
+        complaintStats.setTotalComplaints(complaintrepo.count());
         complaintStats.setPendingComplaints(complaintrepo.getPendingCompliantCount());
         complaintStats.setResolvedComplaints(complaintrepo.getResolvedCompliantCount());
         complaintStats.setRejectedComplaints(complaintrepo.getRejectedCompliantCount());
