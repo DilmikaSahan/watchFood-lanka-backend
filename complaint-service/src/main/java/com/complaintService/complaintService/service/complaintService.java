@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -51,6 +52,7 @@ public class complaintService {
     }
 
     // save complaint
+    @Transactional
     public userCompliantResponseDto saveComplaint(userCompliantCreateDto complaint, UUID complainerId) {
         complaintModel complaintmodel = new complaintModel();
         complaintmodel.setComplainerId(complainerId);
@@ -64,7 +66,9 @@ public class complaintService {
         return modelMapper.map(complaintmodel,userCompliantResponseDto.class);
     }
 
+
     // update complaint user section, access permission : only user
+    @Transactional
     public userCompliantResponseDto updateComplaintUser(userComplaintupdateDto complaint){
         Long complaintID = complaint.getComplaintId();
         complaintModel complaintmodel = complaintrepo.getCompliantById(complaintID);
@@ -79,6 +83,7 @@ public class complaintService {
         return ResponseEntity.ok(Map.of("message","success"));
     }
     //add new images
+    @Transactional
     public List<String> addImages(Long complaintID,List<String> images){
         complaintModel complaint = complaintrepo.getCompliantById(complaintID);
         List<String> imagesList = complaint.getImageUrl();
@@ -87,6 +92,7 @@ public class complaintService {
         return imagesList;
     }
     //delete images
+    @Transactional
     public List<String> deleteImages(Long complaintID, List<String> images){
         complaintModel complaint = complaintrepo.getCompliantById(complaintID);
         System.out.println("delete images : "+images);
@@ -95,9 +101,13 @@ public class complaintService {
         complaintrepo.save(complaint);
         return imagesList;
     }
+    @Transactional
     //assigned officer to complaint
     public ResponseEntity<Map<String,String>> assignedOfficerToCompliant(Long complaintId,UUID officerId){
         complaintModel complaint = complaintrepo.getCompliantById(complaintId);
+        if (complaint.getOfficer()!=null){
+            return ResponseEntity.ok(Map.of("message","Officer is already assigned"));
+        }
         complaint.setOfficer(officerId);
         complaintrepo.save(complaint);
         return ResponseEntity.ok(Map.of("message","success"));
@@ -111,6 +121,7 @@ public class complaintService {
         return modelMapper.map(complaints,new TypeToken<List<userCompliantResponseDto>>(){}.getType());
     }
     //update officer section
+    @Transactional
     public ResponseEntity<Map<String,String>> updateOfficerSection(UUID officerId,Long complaintID,OfficerComplaintRequestDto dto){
         UUID officer = dto.getOfficer();
         if (!officer.equals(officerId)) {
@@ -136,6 +147,7 @@ public class complaintService {
         complaintStats.setInProgressComplaints(complaintrepo.getInProgressCompliantCount());
         return complaintStats;
     }
+    @Transactional
     // remove (unassign) officer from complain: permission  admin
     public ResponseEntity<?> updateOfficerAssignment(Long complaintID){
         complaintModel complaint = complaintrepo.getCompliantById(complaintID);
@@ -147,6 +159,7 @@ public class complaintService {
         return ResponseEntity.ok(Map.of("message","success"));
     }
     //update priority of complaint
+    @Transactional
     public ResponseEntity<?> updateComplaintPriority(priorityResponseDto  responseDto){
         complaintModel complaint =  complaintrepo.getCompliantById(responseDto.getId());
         if (complaint == null) {

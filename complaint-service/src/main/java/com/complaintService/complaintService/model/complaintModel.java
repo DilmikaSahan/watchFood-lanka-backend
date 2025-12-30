@@ -50,4 +50,7 @@ public class complaintModel {
 
     private String priorityLevel;
 
+    @Version
+    private Long version;
+
 }
